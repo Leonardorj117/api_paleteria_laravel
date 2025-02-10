@@ -31,7 +31,7 @@ Route::get('/ping', function (Request  $request) {
     return ['msg' => $msg];
 });
 
-Route::get('/browse_productos/', [ProductoController::class, 'show']);
+Route::get('/productos_buscar', [ProductoController::class, 'show']);
 
 Route::resource('productos', ProductoController::class)->only([
     'store'
