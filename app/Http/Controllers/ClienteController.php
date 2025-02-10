@@ -36,7 +36,10 @@ class ClienteController extends Controller
      */
     public function show(Cliente $cliente)
     {
-        //
+        $results = Cliente::all();
+
+        return $results->toJson();
+        
     }
 
     /**
