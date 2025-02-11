@@ -31,15 +31,14 @@ Route::resource('productos', ProductoController::class)->only([
     'store'
 ]);
 
-Route::get('/clientes',[ClienteController::class,'show']);
+Route::get('/clientes',[ClienteController::class,'index']);
 
+Route::apiResource('pedidos', PedidoController::class);
+Route::get('mis-pedidos', [PedidoController::class, 'misPedidos']);
+Route::get('pedidos/{id}/detalle', [PedidoController::class, 'detalle']);
 
 Route::get('productos', [ProductoController::class, 'index']);
 Route::post('productos', [ProductoController::class, 'store']);
 Route::get('productos/{id}', [ProductoController::class, 'show']);
 Route::put('productos/{id}', [ProductoController::class, 'update']);
 Route::delete('productos/{id}', [ProductoController::class, 'destroy']);
-
-Route::apiResource('pedidos', PedidoController::class);
-Route::get('mis-pedidos', [PedidoController::class, 'misPedidos']);
-Route::get('pedidos/{id}/detalle', [PedidoController::class, 'detalle']);
