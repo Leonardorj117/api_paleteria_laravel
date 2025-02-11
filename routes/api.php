@@ -43,3 +43,11 @@ Route::post('productos', [ProductoController::class, 'store']);
 Route::get('productos/{id}', [ProductoController::class, 'show']);
 Route::put('productos/{id}', [ProductoController::class, 'update']);
 Route::delete('productos/{id}', [ProductoController::class, 'destroy']);
+
+Route::prefix('administradores')->group(function () {
+    Route::get('/', [AdministradorController::class, 'index']); // Obtener todos los administradores
+    Route::post('/', [AdministradorController::class, 'store']); // Crear un nuevo administrador
+    Route::get('/{id}', [AdministradorController::class, 'show']); // Obtener un administrador por ID
+    Route::put('/{id}', [AdministradorController::class, 'update']); // Actualizar un administrador por ID
+    Route::delete('/{id}', [AdministradorController::class, 'destroy']); // Eliminar un administrador por ID
+});
