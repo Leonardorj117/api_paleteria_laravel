@@ -31,7 +31,8 @@ Route::resource('productos', ProductoController::class)->only([
     'store'
 ]);
 
-Route::get('/clientes',[ClienteController::class,'index']);
+Route::get('clientes',[ClienteController::class,'index']);
+Route::post('clientes',[ClienteController::class,'store']);
 
 Route::apiResource('pedidos', PedidoController::class);
 Route::get('mis-pedidos', [PedidoController::class, 'misPedidos']);

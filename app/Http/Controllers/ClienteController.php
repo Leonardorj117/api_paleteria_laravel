@@ -11,8 +11,6 @@ class ClienteController extends Controller
     private $db;
     private $collection;
 
-
-
     public function index()
     {
         // Obtener todos los clientes
@@ -45,6 +43,8 @@ class ClienteController extends Controller
 
             // Insertar en MongoDB
             $cliente = new Cliente($validated);
+            $cliente->save();
+
             $cliente->save();
 
             return response()->json($cliente, 201);
