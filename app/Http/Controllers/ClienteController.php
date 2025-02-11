@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Cliente;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 
 class ClienteController extends Controller
 {
@@ -16,8 +15,6 @@ class ClienteController extends Controller
 
     public function index()
     {
-
-        $clientes = Cliente::all();
         // Obtener todos los clientes
         $clientes = Cliente::all();
 
@@ -48,6 +45,7 @@ class ClienteController extends Controller
 
             // Insertar en MongoDB
             $cliente = new Cliente($validated);
+            $cliente->save();
 
             return response()->json($cliente, 201);
         } catch (\Exception $e) {
