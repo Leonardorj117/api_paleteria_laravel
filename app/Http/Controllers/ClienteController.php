@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use MongoDB\Client;
 use App\Models\Cliente;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -13,16 +12,15 @@ class ClienteController extends Controller
     private $db;
     private $collection;
 
-    public function __construct()
-    {
-        $client = new Client(env('MONGO_DSN', 'mongodb://localhost:27017'));
-        $this->db = $client->selectDatabase(env('MONGO_DATABASE', 'mi_base'));
-        $this->collection = $this->db->selectCollection(env('MONGO_COLLECTION', 'clientes'));
-    }
+
 
     public function index()
     {
-        $clientes = Cliente::all(); // En lugar de $this->collection->find()
+
+        $clientes = Cliente::all();
+        // Obtener todos los clientes
+        $clientes = Cliente::all();
+
         return response()->json($clientes);
     }
 
@@ -49,21 +47,7 @@ class ClienteController extends Controller
             $validated['imagen'] = 'cliente_default.jpg';
 
             // Insertar en MongoDB
-            $insertResult = $this->collection->insertOne($validated);
-            $cliente = $this->collection->findOne(['_id' => $insertResult->getInsertedId()]);
-
-            // Subir imagen si existe
-            if ($request->hasFile('imagen')) {
-                $path = $request->file('imagen')->storeAs(
-                    'imagenes/clientes',
-                    "cliente_{$cliente['_id']}." . $request->file('imagen')->extension(),
-                    'public'
-                );
-                $this->collection->updateOne(
-                    ['_id' => $cliente['_id']],
-                    ['$set' => ['imagen' => asset("storage/$path")]]
-                );
-            }
+            $cliente = new Cliente($validated);
 
             return response()->json($cliente, 201);
         } catch (\Exception $e) {
@@ -73,11 +57,7 @@ class ClienteController extends Controller
 
     public function show($id)
     {
-        $cliente = $this->collection->findOne(['_id' => $id]);
-
-        if (!$cliente) {
-            return response()->json(['error' => 'Cliente no encontrado'], 404);
-        }
+        $cliente = Cliente::findOrFail($id);
 
         return response()->json($cliente);
     }
@@ -85,7 +65,7 @@ class ClienteController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $cliente = $this->collection->findOne(['_id' => $id]);
+            $cliente = Cliente::findOrFail($id);
 
             if (!$cliente) {
                 return response()->json(['error' => 'Cliente no encontrado'], 404);
@@ -105,33 +85,14 @@ class ClienteController extends Controller
                 'verificacion' => 'nullable|boolean',
                 'imagen' => 'nullable|image|max:2048',
             ]);
-
-            // Encriptar contraseña si se proporciona
-            if ($request->filled('contraseña')) {
-                $validated['contraseña'] = Hash::make($request->contraseña);
-            }
-
-            // Manejo de imagen
-            if ($request->hasFile('imagen')) {
-                if (isset($cliente['imagen']) && $cliente['imagen'] !== 'cliente_default.jpg') {
-                    $oldPath = str_replace('storage/', '', $cliente['imagen']);
-                    Storage::disk('public')->delete($oldPath);
-                }
-
-                $path = $request->file('imagen')->storeAs(
-                    'imagenes/clientes',
-                    "cliente_{$id}." . $request->file('imagen')->extension(),
-                    'public'
-                );
-                $validated['imagen'] = asset("storage/$path");
-            }
+            
 
             // Actualizar cliente
-            $this->collection->updateOne(['_id' => $id], ['$set' => $validated]);
+            $cliente->update($validated);
 
             return response()->json([
                 'message' => 'Cliente actualizado con éxito.',
-                'cliente' => $this->collection->findOne(['_id' => $id]),
+                'cliente' => $cliente,
             ], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -140,20 +101,14 @@ class ClienteController extends Controller
 
     public function destroy($id)
     {
-        $cliente = $this->collection->findOne(['_id' => $id]);
+        $cliente = Cliente::findOrFail($id);
 
         if (!$cliente) {
             return response()->json(['error' => 'Cliente no encontrado'], 404);
         }
 
-        // Eliminar imagen si no es la predeterminada
-        if (isset($cliente['imagen']) && $cliente['imagen'] !== 'cliente_default.jpg') {
-            $oldPath = str_replace('storage/', '', $cliente['imagen']);
-            Storage::disk('public')->delete($oldPath);
-        }
-
         // Eliminar cliente
-        $this->collection->deleteOne(['_id' => $id]);
+        $cliente->delete();
 
         return response()->json(null, 204);
     }
