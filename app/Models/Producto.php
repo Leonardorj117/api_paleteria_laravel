@@ -7,7 +7,20 @@ use MongoDB\Laravel\Eloquent\Model;
 
 class Producto extends Model
 {   
-    protected $connection = 'mongodb';
-    protected $fillable = ['nombre', 'descripcion', 'imagen1', 'existencia', 'precio'];
     use HasFactory;
+    
+    protected $connection = 'mongodb';
+    protected $collection = 'productos'; // Especificar la colección en MongoDB si es necesario
+
+    protected $fillable = [
+        'nombre', 
+        'descripcion', 
+        'categoria', 
+        'precio', 
+        'estado', 
+        'existencia', 
+        'imagen_1', 
+        'imagen_2', 
+        'imagen_3'
+    ];
 }

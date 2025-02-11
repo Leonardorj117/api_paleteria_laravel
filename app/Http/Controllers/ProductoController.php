@@ -4,67 +4,106 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ProductoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    use AuthorizesRequests;
+
     public function index()
     {
-        //
+        // $this->authorize('viewAny', Producto::class);
+        $productos = Producto::all();
+
+        return response()->json($productos, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $data = $request->all();
-        $producto = new Producto();
-        $producto->fill($data);
-        $producto->save();
+        // $this->authorize('create', Producto::class);
+
+        try {
+            $validated = $request->validate([
+                'nombre' => 'required|string|max:50',
+                'descripcion' => 'required|string|max:255',
+                'categoria' => 'required|array', // Almacenar la categoría como un arreglo dentro del documento
+                'precio' => 'required|numeric|min:0',
+                'estado' => 'required|string|in:Activo,Inactivo',
+                'existencia' => 'required|integer|min:0',
+                'imagen_1' => 'nullable|max:2048',
+                'imagen_2' => 'nullable|max:2048',
+                'imagen_3' => 'nullable|max:2048',
+            ]);
+
+            $producto = new Producto($validated);
+
+            foreach (['imagen_1', 'imagen_2', 'imagen_3'] as $key) {
+                if ($request->hasFile($key)) {
+                    $img = $request->file($key);
+                    $path = $img->storeAs('imagenes/productos', "{$key}_" . time() . ".{$img->extension()}", 'public');
+                    $producto->$key = asset("storage/$path");
+                }
+            }
+
+            $producto->save();
+
+            return response()->json(['message' => 'Producto creado con éxito.', 'producto' => $producto], 201);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show()
+    public function show($id)
     {
-    $results = Producto::all();
+        $producto = Producto::findOrFail($id);
+        // $this->authorize('view', $producto);
 
-    return $results->toJson();
+        return response()->json($producto, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Producto $producto)
+    public function update(Request $request, $id)
     {
-        //
+        $producto = Producto::findOrFail($id);
+        // $this->authorize('update', $producto);
+
+        try {
+            $validated = $request->validate([
+                'nombre' => 'required|string|max:50',
+                'descripcion' => 'required|string|max:255',
+                'categoria' => 'required|array',
+                'precio' => 'required|numeric|min:0',
+                'estado' => 'required|string|in:Activo,Inactivo',
+                'existencia' => 'required|integer|min:0',
+                'imagen_1' => 'nullable|max:2048',
+                'imagen_2' => 'nullable|max:2048',
+                'imagen_3' => 'nullable|max:2048',
+            ]);
+
+            $producto->update($validated);
+
+            foreach (['imagen_1', 'imagen_2', 'imagen_3'] as $key) {
+                if ($request->hasFile($key)) {
+                    $img = $request->file($key);
+                    $path = $img->storeAs('imagenes/productos', "{$key}_" . time() . ".{$img->extension()}", 'public');
+                    $producto->$key = asset("storage/$path");
+                }
+            }
+
+            $producto->save();
+
+            return response()->json(['message' => 'Producto actualizado con éxito.', 'producto' => $producto], 200);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Producto $producto)
+    public function destroy($id)
     {
-        //
-    }
+        $producto = Producto::findOrFail($id);
+        // $this->authorize('delete', $producto);
+        $producto->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Producto $producto)
-    {
-        //
+        return response()->json(['message' => 'Producto eliminado con éxito.'], 204);
     }
 }
