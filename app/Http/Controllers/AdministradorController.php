@@ -17,10 +17,6 @@ class AdministradorController extends Controller
     }
 
     
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         try {
@@ -103,7 +99,7 @@ class AdministradorController extends Controller
             return response()->json(['error' => 'Admin no encontrado'], 404);
         }
 
-        // Eliminar admin
+        
         $admin->delete();
 
         return response()->json(null, 204);

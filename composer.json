@@ -11,7 +11,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "mongodb/laravel-mongodb": "4.8",
-        "nesbot/carbon": "2.67.0"
+        "nesbot/carbon": "^2.73"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
