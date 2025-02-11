@@ -15,7 +15,6 @@ class ProductoController extends Controller
     {
         // $this->authorize('viewAny', Producto::class);
         $productos = Producto::all();
-
         return response()->json($productos, 200);
     }
 

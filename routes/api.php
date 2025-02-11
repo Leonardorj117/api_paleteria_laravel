@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\PedidoController;
-
+use App\Http\Controllers\AdministradorController;
 
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
