@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Laravel\Sanctum\PersonalAccessToken as SanctumToken;
-use MongoDB\Laravel\Eloquent\Model;
-
+use MongoDB\Laravel\Eloquent\DocumentModel;
 class PersonalAccessToken extends SanctumToken
 {
-    protected $connection = 'mongodb';  // Conectar a MongoDB
+    use DocumentModel;
+    protected $connection = 'mongodb';
+    protected $table = 'Aministradores';
+    protected $keyType = 'string';
 }
