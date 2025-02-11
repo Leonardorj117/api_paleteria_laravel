@@ -95,7 +95,7 @@ return [
 
         'mongodb' => [
             'driver' => 'mongodb',
-            'dsn' => env('DB_URI'),
+            'dsn' => env('MONGO_DSN', 'mongodb://localhost:27017'),
             'database' => 'utj',
         ],
 

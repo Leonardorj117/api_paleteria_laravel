@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use MongoDB\Laravel\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model as Authenticatable ;
 
-class Administrador extends Model
+class Administrador extends Authenticatable
 {
     protected $connection = 'mongodb';
     protected $collection = 'clientes';
@@ -19,6 +19,11 @@ class Administrador extends Model
         'rol',
         'estado',
         'imagen',
+    ];
+
+    protected $hidden = [
+        'contrasena',
+        'rol',
     ];
     
     use HasFactory;
