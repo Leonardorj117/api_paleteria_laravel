@@ -95,8 +95,8 @@ return [
 
         'mongodb' => [
             'driver' => 'mongodb',
-            'dsn' => env('DB_DSN', ''),
-            'database' => env('DB_DATABASE', 'utj'),
+            'dsn' => env('DB_URI', 'mongodb+srv://Emixtrex:BIWiw1B43SNc5YQX@cluster0.wsrza.mongodb.net/utj?retryWrites=true&w=majority&appName=Cluster0'),
+            'database' => env('utj'),
         ],
 
     ],

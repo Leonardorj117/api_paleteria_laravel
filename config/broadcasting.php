@@ -48,6 +48,16 @@ return [
             ],
         ],
 
+        'mongodb' => [
+            'driver'   => 'mongodb',
+            'host'     => env('DB_HOST', '127.0.0.1'),
+            'port'     => env('DB_PORT', 27017),
+            'database' => env('DB_DATABASE', 'utj'),
+            'username' => env('DB_USERNAME', 'Emixtrex'),
+            'password' => env('DB_PASSWORD', 'BIWiw1B43SNc5YQX')
+           
+        ],
+
         'ably' => [
             'driver' => 'ably',
             'key' => env('ABLY_KEY'),

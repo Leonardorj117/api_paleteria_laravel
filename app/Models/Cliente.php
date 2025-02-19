@@ -15,7 +15,7 @@ class Cliente extends Model
         'apellido_paterno',
         'imagen',
         'email',
-        'contraseña',
+        'password',
         'estado',
         'información',
         'dirección',

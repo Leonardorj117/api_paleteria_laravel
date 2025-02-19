@@ -2,52 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Administrador;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 
-class AdministradorController extends Controller
+class AdminController extends Controller
 {
    
     public function index()
     {
-     $admin = Administrador::all();
-     return response()->json($admin);
-    }
-
-    
-    public function store(Request $request)
-    {
         try {
-            $validated = $request->validate(
-                [
-                    'nombre' => 'required|min:3|max:50',
-                    'apellido_materno' => 'required|min:3|max:50',
-                    'apellido_paterno' => 'required|min:3|max:50',
-                    'nombre_de_cuenta' => 'required|min:3|max:50',
-                    'contraseña' => 'required|min:6|max:256',
-                    'rol' => 'required|string',
-                    'estado' => 'required|string',
-                    'imagen' => 'nullable|max:2048',
-                ]);
-                // Encriptar contraseña
-            $validated['contraseña'] = Hash::make($request->contraseña);
-            $validated['imagen'] = 'cliente_default.jpg';
-
-            // Insertar en MongoDB
-            $admin = new Administrador($validated);
-            $admin->save();
+            $admin = Admin::all();
             return response()->json($admin);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 422);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
   
     public function show( $id)
     {
-        $admin = Administrador::findOrFail($id);
+        $admin = Admin::findOrFail($id);
 
         return response()->json($admin);
     }
@@ -55,7 +31,7 @@ class AdministradorController extends Controller
     public function update(Request $request, $id)
     {
      try {
-        $admin = Administrador::findOrFail($id);
+        $admin = Admin::findOrFail($id);
 
         if (!$admin) {
             return response()->json(['error' => 'admin no encontrado'], 404);
@@ -93,7 +69,7 @@ class AdministradorController extends Controller
     }
     public function destroy($id)
     {
-        $admin = Administrador::findOrFail($id);
+        $admin = Admin::findOrFail($id);
 
         if (!$admin) {
             return response()->json(['error' => 'Admin no encontrado'], 404);
@@ -102,6 +78,6 @@ class AdministradorController extends Controller
         
         $admin->delete();
 
-        return response()->json(null, 204);
+        return response()->json("eliminado", 204);
     }
 }
