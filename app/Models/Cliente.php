@@ -13,17 +13,17 @@ class Cliente extends Model
         'nombre',
         'apellido_materno',
         'apellido_paterno',
-        'imagen',
-        'email',
-        'password',
+       // 'email',
+        'contrasena',
         'estado',
-        'información',
-        'dirección',
+       // 'información',
+       // 'dirección',
         'red_social',
-        'verificación',
-        'google_id',
-        'google_token',
-        'google_refresh_token',
+        'imagen'
+       // 'verificación',
+       // 'google_id',
+       // 'google_token',
+        //'google_refresh_token',
     ];
     use HasFactory;
 }

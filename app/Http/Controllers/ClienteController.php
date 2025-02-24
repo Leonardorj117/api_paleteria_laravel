@@ -13,10 +13,19 @@ class ClienteController extends Controller
 
     public function index()
     {
-        // Obtener todos los clientes
-        $clientes = Cliente::all();
+        try {
+            $clientes = Cliente::all();
+            return response()->json([
+                'message' => 'Clientes recuperados con exito.',
+                'clientes'=> $clientes
+            ], 200);
 
-        return response()->json($clientes);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al recuperar clientes',
+                'clientes' => $e->getMessage()
+            ]);
+        }
     }
 
     public function store(Request $request)
@@ -24,16 +33,12 @@ class ClienteController extends Controller
         try {
             // Validación
             $validated = $request->validate([
-                'nombre' => 'required|min:3|max:50',
-                'apellido_materno' => 'required|min:3|max:50',
-                'apellido_paterno' => 'required|min:3|max:50',
-                'correo' => 'required|email|max:100',
+                'nombre' => 'required|min:4|max:30',
+                'apellido_paterno' => 'required|min:4|max:30',
+                'apellido_materno' => 'required|min:4|max:30',
                 'contraseña' => 'required|min:6|max:256',
                 'estado' => 'required|string',
-                'informacion' => 'nullable|max:255',
-                'direccion' => 'nullable|max:255',
                 'red_social' => 'nullable|max:255',
-                'verificacion' => 'nullable|boolean',
                 'imagen' => 'nullable|max:2048',
             ]);
 
@@ -45,69 +50,93 @@ class ClienteController extends Controller
             $cliente = new Cliente($validated);
             $cliente->save();
 
-            $cliente->save();
+            return response()->json([
+                'message' => 'Cliente registrado con éxito.',
+                'clientes' => $cliente,
+            ], 201);
 
-            return response()->json($cliente, 201);
+
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 422);
+            return response()->json([
+                'message' => 'error al registrar el cliente',
+                'clientes' => $e->getMessage()
+            ], 422);
         }
     }
 
     public function show($id)
     {
-        $cliente = Cliente::findOrFail($id);
-
-        return response()->json($cliente);
+        try {
+            $cliente = Cliente::findOrFail($id);
+            return response()->json([
+                'message' => 'Cliente recuperado con éxito.',
+                'clientes' => $cliente
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al recuperar el cliente.',
+                'clientes' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function update(Request $request, $id)
+    public function update($id, Request $request)
     {
         try {
             $cliente = Cliente::findOrFail($id);
-
-            if (!$cliente) {
-                return response()->json(['error' => 'Cliente no encontrado'], 404);
-            }
 
             // Validación
             $validated = $request->validate([
                 'nombre' => 'required|min:3|max:50',
                 'apellido_materno' => 'required|min:3|max:50',
                 'apellido_paterno' => 'required|min:3|max:50',
-                'correo' => "required|email|max:100",
-                'contraseña' => 'nullable|min:6|max:256',
                 'estado' => 'required|string',
-                'informacion' => 'nullable|max:255',
-                'direccion' => 'nullable|max:255',
-                'red_social' => 'nullable|max:255',
-                'verificacion' => 'nullable|boolean',
-                'imagen' => 'nullable|image|max:2048',
+                'imagen' => 'nullable|string|max:2048',
             ]);
-            
+
+            // Si se envía una imagen, actualizarla; si no, mantener la actual
+            if (!$request->has('imagen')) {
+                unset($validated['imagen']);
+            }
+
 
             // Actualizar cliente
             $cliente->update($validated);
 
             return response()->json([
                 'message' => 'Cliente actualizado con éxito.',
-                'cliente' => $cliente,
+                'clientes' => $cliente,
             ], 200);
+
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json([
+                'message' => 'error al actualizar cliente',
+                'clientes' => $e->getMessage()
+            ], 500);
         }
     }
 
     public function destroy($id)
     {
-        $cliente = Cliente::findOrFail($id);
+        try {
+            $cliente = Cliente::findOrFail($id);
 
-        if (!$cliente) {
-            return response()->json(['error' => 'Cliente no encontrado'], 404);
+            $cliente->delete();
+
+            return response()->json(
+                [
+                    'message' => 'cliente eliminado',
+                    'clientes' => 'eliminado'
+                ],
+                200
+            );
+
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'error al eliminar cliente',
+                'clientes' => $e->getMessage()
+            ], 500);
         }
-
-        // Eliminar cliente
-        $cliente->delete();
-
-        return response()->json(null, 204);
     }
 }

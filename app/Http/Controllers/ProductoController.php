@@ -13,14 +13,22 @@ class ProductoController extends Controller
 
     public function index()
     {
-        // $this->authorize('viewAny', Producto::class);
-        $productos = Producto::all();
-        return response()->json($productos, 200);
+      try {
+          $productos = Producto::all();
+          return response()->json([
+            'message' => 'Productos recuperados con exito.',
+            'productos'=> $productos
+        ], 200);
+      } catch (\Exception $e){
+        return response()->json([
+            'message' => 'Error al recuperar los productos.',
+            'productos'=> $e->getMessage()
+        ], 200);
+      }
     }
 
     public function store(Request $request)
     {
-        // $this->authorize('create', Producto::class);
 
         try {
             $validated = $request->validate([
@@ -47,7 +55,10 @@ class ProductoController extends Controller
 
             $producto->save();
 
-            return response()->json(['message' => 'Producto creado con éxito.', 'producto' => $producto], 201);
+            return response()->json([
+                'message' => 'Producto creado con éxito.', 
+                'producto' => $producto], 201);
+
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         }

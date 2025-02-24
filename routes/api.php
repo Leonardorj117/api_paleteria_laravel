@@ -32,11 +32,12 @@ Route::resource('productos', ProductoController::class)->only([
 
 Route::get('clientes',[ClienteController::class,'index']);
 Route::post('clientes',[ClienteController::class,'store']);
+Route::delete('clientes/{id}',[ClienteController::class,'destroy']);
+Route::put('clientes/{id}',[ClienteController::class,'update']);
 
 
 //Amind Login
 Route::post('/admin/login', [AdminAuthController::class, 'login']);
-Route::post('/admin/create', [AdminAuthController::class, 'create']);
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::apiResource('pedidos', PedidoController::class);
@@ -49,9 +50,12 @@ Route::get('productos/{id}', [ProductoController::class, 'show']);
 Route::put('productos/{id}', [ProductoController::class, 'update']);
 Route::delete('productos/{id}', [ProductoController::class, 'destroy']);
 
+
+//Administradores routes
 Route::prefix('administradores')->group(function () {
     Route::get('/', [AdminController::class, 'index']); 
     Route::get('/{id}', [AdminController::class, 'show']); // Obtener un administrador por ID
     Route::put('/{id}', [AdminController::class, 'update']); // Actualizar un administrador por ID
     Route::delete('/{id}', [AdminController::class, 'destroy']); // Eliminar un administrador por ID
+    Route::post('/', [AdminController::class, 'create']);
 });
