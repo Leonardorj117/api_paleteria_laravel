@@ -57,5 +57,5 @@ Route::prefix('administradores')->group(function () {
     Route::get('/{id}', [AdminController::class, 'show']); // Obtener un administrador por ID
     Route::put('/{id}', [AdminController::class, 'update']); // Actualizar un administrador por ID
     Route::delete('/{id}', [AdminController::class, 'destroy']); // Eliminar un administrador por ID
-    Route::post('/', [AdminController::class, 'create']);
+    Route::post('/', [AdminController::class, 'create']);//Crear un administrador.
 });

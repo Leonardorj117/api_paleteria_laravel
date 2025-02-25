@@ -5,42 +5,49 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Admin;
-use Illuminate\Support\Facades\Hash; 
-
-use function response;
-
 class AdminAuthController extends Controller
 {
+
     public function login(Request $request)
     {
-        dd($request);
+      try{
         $request->validate([
-            'nombre_de_cuenta' => 'required|string',
-            'password' => 'required|string',
-            'nombre' => 'required|string',
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
-        
-       
-        $admin = Admin::where('nombre_de_cuenta', $request->nombre_de_cuenta)->first();
 
-        // Verificar si el admin existe y la contraseña es correcta
-        if ($admin && Hash::check($request->password, $admin->password)) {
-            // Iniciar sesión manualmente
-            Auth::guard('admin')->login($admin);
-
-           
+        if (Auth::guard('admin')->attempt($request->only('email', 'password'))) {
             return response()->json([
-                'token' => $admin->createToken(request()->nombre)->plainTextToken
-            ]);
-            
+                'user' => Auth::user(),
+                'message' => 'Incio de sesion correcto.',
+            ],200);
         }
-        return response()->json(['message' => 'Credenciales incorrectas'], 401);
+      }catch(\Exception $e){
+        return response()->json([
+            'user'=> Auth::user(),
+            'message'=> $e->getMessage(),
+        ],500);
+      }
     }
+
+    // public function login(Request $request)
+    // {
+    //     $credentials = $request->validate([
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //     ]);
+
+    //     if (Auth::guard('admin')->attempt($credentials)) {
+    //         return redirect()->intended('/admin/dashboard');
+    //     }
+
+    //     return back()->withErrors(['email' => 'Credenciales incorrectas']);
+    // }
+
     public function logout()
     {
         Auth::guard('admin')->logout();
-        return response()->json(['message' => 'Sesión cerrada exitosamente']);
+        return redirect('/admin/login');
     }
 
 }
