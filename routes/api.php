@@ -1,9 +1,8 @@
 <?php
 
+use App\Http\Controllers\ClienteAuthController;
 use App\Http\Controllers\ClienteController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\AdminController;
@@ -21,6 +20,11 @@ Route::put('clientes/{id}', [ClienteController::class, 'update']);
 //Amind Login
 Route::post('/admin/login', [AdminAuthController::class, 'login']);
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->middleware('auth:sanctum');
+
+
+//Cliente Login
+Route::post('/cliente/login', [ClienteAuthController::class, 'login']);
+Route::post('/cliente/logout', [ClienteAuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::apiResource('pedidos', PedidoController::class);
 Route::get('mis-pedidos', [PedidoController::class, 'misPedidos']);

@@ -5,25 +5,27 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-class AdminAuthController extends Controller
-{
 
+class ClienteAuthController extends Controller
+{
     public function login(Request $request)
     {
+        
         try {
+
             $request->validate([
                 'email' => 'required|email',
                 'password' => 'required',
             ]);
 
-            if (Auth::guard('admin')->attempt($request->only('email', 'password'))) {
+            if (Auth::guard('cliente')->attempt($request->only('email', 'password'))) {
 
-                $admin = Auth::guard('admin')->user();
+                $cliente = Auth::guard('cliente')->user();
 
-                $token = $admin->createToken('AdminToken')->plainTextToken;
+                $token = $cliente->createToken('ClienteToken')->plainTextToken;
 
                 return response()->json([
-                    'user' => $admin,
+                    'user' => $cliente,
                     'token' => $token,
                     'message' => 'Inicio de sesión exitoso',
                 ], 200);
@@ -32,6 +34,7 @@ class AdminAuthController extends Controller
             return response()->json([
                 'message' => 'Credenciales incorrectas',
             ], 401);
+
         } catch (\Exception $e) {
             return response()->json([
                 'user' => Auth::user(),
@@ -42,10 +45,9 @@ class AdminAuthController extends Controller
 
     public function logout()
     {
-        Auth::guard('admin')->logout();
+        Auth::guard('cliente')->logout();
         return response()->json([
             'message' => 'Session terminada.',
         ]);
     }
-
 }

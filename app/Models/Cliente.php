@@ -3,27 +3,29 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use MongoDB\Laravel\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use MongoDB\Laravel\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
+use MongoDB\Laravel\Eloquent\SoftDeletes;
 
-class Cliente extends Model
+
+class Cliente extends Authenticatable
 {
+
+    use HasFactory,HasApiTokens, SoftDeletes,Notifiable;
+
     protected $connection = 'mongodb';
     protected $collection = 'clientes';
+    protected $primaryKey = 'nombre';
     protected $fillable = [
+        'id',
         'nombre',
         'apellido_materno',
         'apellido_paterno',
-       // 'email',
-        'contrasena',
+        'email',
+        'password',
         'estado',
-       // 'información',
-       // 'dirección',
         'red_social',
-        'imagen'
-       // 'verificación',
-       // 'google_id',
-       // 'google_token',
-        //'google_refresh_token',
+        'imagen',
     ];
-    use HasFactory;
 }

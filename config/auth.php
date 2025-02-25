@@ -44,6 +44,23 @@ return [
             'driver' => 'session',
             'provider' => 'admins',
         ],
+        'cliente' => [
+            'driver' => 'session',
+            'provider' => 'clientes',
+        ],
+
+        'api' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
+        ],
+        'admin-api' => [
+            'driver' => 'sanctum',
+            'provider' => 'admins',
+        ],
+        'cliente-api' => [
+            'driver' => 'sanctum',
+            'provider' => 'clientes',
+        ],
     ],
 
     /*
@@ -71,6 +88,10 @@ return [
         'admins' => [ 
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
+        ],
+        'clientes' => [ 
+            'driver' => 'eloquent',
+            'model' => App\Models\Cliente::class,
         ],
 
         // 'users' => [

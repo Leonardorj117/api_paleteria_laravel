@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Cliente;
 use Illuminate\Support\Facades\Hash;
+use MongoDB\BSON\ObjectId;
 
 class ClienteController extends Controller
 {
@@ -36,14 +37,15 @@ class ClienteController extends Controller
                 'nombre' => 'required|min:4|max:30',
                 'apellido_paterno' => 'required|min:4|max:30',
                 'apellido_materno' => 'required|min:4|max:30',
-                'contraseña' => 'required|min:6|max:256',
+                'email' => 'required|email|max:50',
+                'password' => 'required|min:6|max:256',
                 'estado' => 'required|string',
                 'red_social' => 'nullable|max:255',
                 'imagen' => 'nullable|max:2048',
             ]);
 
             // Encriptar contraseña
-            $validated['contraseña'] = Hash::make($request->contraseña);
+            $validated['password'] = Hash::make($request->password);
             $validated['imagen'] = 'cliente_default.jpg';
 
             // Insertar en MongoDB
@@ -119,7 +121,16 @@ class ClienteController extends Controller
     public function destroy($id)
     {
         try {
-            $cliente = Cliente::findOrFail($id);
+            $objectId = new ObjectId($id); // Convertir a ObjectId
+
+            $cliente = Cliente::where('_id', $objectId)->first();
+
+            if (!$cliente) {
+                return response()->json([
+                    'message' => 'Cliente no encontrado',
+                    'clientes' => null
+                ], 404);
+            }
 
             $cliente->delete();
 
@@ -139,4 +150,5 @@ class ClienteController extends Controller
             ], 500);
         }
     }
+
 }
