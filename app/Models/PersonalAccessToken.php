@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Laravel\Sanctum\PersonalAccessToken as SanctumPersonalAccessToken;
+use Laravel\Sanctum\PersonalAccessToken as SanctumToken;
+use MongoDB\Laravel\Eloquent\DocumentModel;
 
-class PersonalAccessToken extends SanctumPersonalAccessToken
+class PersonalAccessToken extends SanctumToken
 {
-    use HasFactory;
+    use DocumentModel;
     protected $connection = 'mongodb';
-    protected $collection = 'personal_access_tokens';
+    protected $table = 'personal_access_tokens';
+    protected $primaryKey = '_id';
+    protected $keyType = 'string';
 }
