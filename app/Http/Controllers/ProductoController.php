@@ -34,9 +34,9 @@ class ProductoController extends Controller
             $validated = $request->validate([
                 'nombre' => 'required|string|max:50',
                 'descripcion' => 'required|string|max:255',
-                'categoria' => 'required|array', // Almacenar la categoría como un arreglo dentro del documento
+                'categoria' => 'required', // Almacenar la categoría como un arreglo dentro del documento
                 'precio' => 'required|numeric|min:0',
-                'estado' => 'required|string|in:Activo,Inactivo',
+                'estado' => 'required|string|in:Activo,Inactivo,Existente,No Existente',
                 'existencia' => 'required|integer|min:0',
                 'imagen_1' => 'nullable|max:2048',
                 'imagen_2' => 'nullable|max:2048',
@@ -81,9 +81,9 @@ class ProductoController extends Controller
             $validated = $request->validate([
                 'nombre' => 'required|string|max:50',
                 'descripcion' => 'required|string|max:255',
-                'categoria' => 'required|array',
+                'categoria' => 'required',
                 'precio' => 'required|numeric|min:0',
-                'estado' => 'required|string|in:Activo,Inactivo',
+                'estado' => 'required|string|in:Activo,Inactivo,Existente,No Existente',
                 'existencia' => 'required|integer|min:0',
                 'imagen_1' => 'nullable|max:2048',
                 'imagen_2' => 'nullable|max:2048',

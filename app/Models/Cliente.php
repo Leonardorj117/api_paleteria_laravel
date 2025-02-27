@@ -16,7 +16,7 @@ class Cliente extends Authenticatable
 
     protected $connection = 'mongodb';
     protected $collection = 'clientes';
-    protected $primaryKey = 'nombre';
+    protected $primaryKey = '_id';
     protected $fillable = [
         'id',
         'nombre',

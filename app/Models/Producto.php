@@ -10,6 +10,7 @@ class Producto extends Model
     use HasFactory;
     
     protected $connection = 'mongodb';
+    protected $primaryKey = '_id';
     protected $collection = 'productos'; // Especificar la colección en MongoDB si es necesario
 
     protected $fillable = [

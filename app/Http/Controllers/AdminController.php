@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
+use MongoDB\BSON\ObjectId;
 
 class AdminController extends Controller
 {
@@ -13,31 +13,42 @@ class AdminController extends Controller
     public function create(Request $request)
     {
         try {
-            $validated = $request->validate(
-                [
-                    'nombre' => 'required|min:3|max:50',
-                    'apellido_materno' => 'required|min:3|max:50',
-                    'apellido_paterno' => 'required|min:3|max:50',
-                    'nombre_de_cuenta' => 'required|min:3|max:50',
-                    'email'=>'required|email|max:50',
-                    'password' => 'required|min:6|max:256',
-                    'rol' => 'required|string',
-                    'estado' => 'required|string',
-                    'imagen' => 'nullable|max:2048',
-                ]
-            );
-            // Encriptar password
-            $validated['password'] = Hash::make($request->password);
-            $validated['imagen'] = 'cliente_default.jpg';
+            $validated = $request->validate([
+                'nombre' => 'required|min:3|max:50',
+                'apellido_materno' => 'required|min:3|max:50',
+                'apellido_paterno' => 'required|min:3|max:50',
+                'nombre_de_cuenta' => 'required|min:3|max:50',
+                'email' => 'required|email|max:50',
+                'password' => 'required|min:6|max:256',
+                'rol' => 'required|string',
+                'estado' => 'required|string',
+                'imagen1' => 'nullable|image|max:2048',
+            ]);
 
-            // Insertar en MongoDB
+            // Encriptar contraseña
+            $validated['password'] = Hash::make($request->password);
+            $validated['imagen1'] = 'cliente_default.jpg'; // Imagen por defecto
+
+            // Crear el usuario en MongoDB primero
             $admin = Admin::create($validated);
+
+            // Verificar si hay una imagen subida
+            if ($request->hasFile('imagen1')) {
+                $img = $request->file('imagen1');
+                $filename = "admin_{$admin->_id}.{$img->extension()}"; // Mongo usa `_id`, no `id`
+                $path = $img->storeAs('imagenes/admins', $filename, 'public');
+
+                // Actualizar la URL de la imagen
+                $admin->imagen1 = asset("storage/$path");
+                $admin->save();
+            }
 
             return response()->json([$admin]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 422);
         }
     }
+
     public function index()
     {
         try {
@@ -91,21 +102,16 @@ class AdminController extends Controller
                 ]
             );
 
-            // Si se envía una imagen, actualizarla; si no, mantener la actual
             if (!$request->has('imagen')) {
                 unset($validated['imagen']);
             }
 
-
-
-            // Actualizar cliente
             $admin->update($validated);
 
             return response()->json([
                 'message' => 'Admin actualizado con éxito.',
                 'Administrador' => $admin,
             ], 200);
-
 
         } catch (\Exception $e) {
             return response()->json([
@@ -115,30 +121,27 @@ class AdminController extends Controller
         }
 
     }
+
     public function destroy($id)
     {
         try {
-            $admin = Admin::findOrFail($id);
-
+            // Convertir el ID a ObjectId correctamente
+            $mongoId = new ObjectId($id);
+    
+            // Buscar el administrador
+            $admin = Admin::where('_id', $mongoId)->first();
+    
             if (!$admin) {
-                return response()->json([
-                    'message' => 'Error al encontrar el Administrator',
-                    'Administrador' => 'Admin no encontrado'
-                ], 404);
+                return response()->json(['message' => 'Admin no encontrado'], 404);
             }
+    
+            // Eliminar el administrador
             $admin->delete();
-
-            return response()->json([
-                'message' => 'Administrador eliminado con exito.',
-            ], 201);
-
+    
+            return response()->json(['message' => 'Administrador eliminado con éxito'], 200);
+    
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al elimnar el Administrator',
-                'Administrador' => $e->getMessage()
-            ], 500);
+            return response()->json(['message' => 'Error al eliminar', 'error' => $e->getMessage()], 500);
         }
-
-
     }
 }

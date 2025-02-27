@@ -13,7 +13,7 @@ class Admin extends Authenticatable
     
     protected $connection = 'mongodb';
     protected $collection = 'admins';
-    protected $primaryKey = 'nombre';
+    protected $primaryKey = '_id';
 
     protected $fillable = [
         'nombre',
@@ -27,10 +27,14 @@ class Admin extends Authenticatable
         'imagen',
     ];
 
+    
     protected $hidden = [
         'remember_token',
         'password'
     ];
     
+    protected $casts = [
+        '_id' => 'string', // Conviértelo a string para que se muestre en JSON
+    ];
    
 }
