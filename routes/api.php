@@ -9,17 +9,21 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminAuthController;
 
 
+//Clientes
 
-
-Route::get('clientes', [ClienteController::class, 'index']);
 Route::post('clientes', [ClienteController::class, 'store']);
-Route::delete('clientes/{id}', [ClienteController::class, 'destroy']);
-Route::put('clientes/{id}', [ClienteController::class, 'update']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::put('/clientes/{id}', [ClienteController::class, 'update']);
+    Route::get('/clientes', [ClienteController::class, 'index']);
+    Route::get('/clientes/{id}', [ClienteController::class, 'show']);
+    Route::delete('/clientes/{id}', [ClienteController::class, 'destroy']);
+});
 
 
 //Amind Login
-Route::post('/admin/login', [AdminAuthController::class, 'login']);
-Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('admin/login', [AdminAuthController::class, 'login']);
+Route::post('admin/logout', [AdminAuthController::class, 'logout'])->middleware('auth:sanctum');
 
 
 //Cliente Login
@@ -31,13 +35,16 @@ Route::get('mis-pedidos', [PedidoController::class, 'misPedidos']);
 Route::get('pedidos/{id}/detalle', [PedidoController::class, 'detalle']);
 
 //Administradores routes
-Route::prefix('administradores')->group(function () {
-    Route::get('/', [AdminController::class, 'index']);
-    Route::get('/{id}', [AdminController::class, 'show']); // Obtener un administrador por ID
-    Route::put('/{id}', [AdminController::class, 'update']); // Actualizar un administrador por ID
-    Route::delete('/{id}', [AdminController::class, 'destroy']); // Eliminar un administrador por ID
-    Route::post('/', [AdminController::class, 'create']);//Crear un administrador.
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::prefix('administradores')->group(function () {
+        Route::get('/', [AdminController::class, 'index']);
+        Route::get('/{id}', [AdminController::class, 'show']); // Obtener un administrador por ID
+        Route::put('/{id}', [AdminController::class, 'update']); // Actualizar un administrador por ID
+        Route::delete('/{id}', [AdminController::class, 'destroy']); // Eliminar un administrador por ID
+        Route::post('/', [AdminController::class, 'create']);//Crear un administrador.
+    });
 });
+
 
 // Route::middleware('auth:sanctum')->group(function () {
     Route::get('productos', [ProductoController::class, 'index']);

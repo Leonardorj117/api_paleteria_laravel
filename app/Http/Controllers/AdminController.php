@@ -22,7 +22,7 @@ class AdminController extends Controller
                 'password' => 'required|min:6|max:256',
                 'rol' => 'required|string',
                 'estado' => 'required|string',
-                'imagen1' => 'nullable|image|max:2048',
+                'imagen1' => 'nullable|string|max:2048',
             ]);
 
             // Encriptar contraseña
