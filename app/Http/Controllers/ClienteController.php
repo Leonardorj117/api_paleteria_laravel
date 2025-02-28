@@ -32,7 +32,6 @@ class ClienteController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validación
             $validated = $request->validate([
                 'nombre' => 'required|min:4|max:30',
                 'apellido_paterno' => 'required|min:4|max:30',
@@ -41,16 +40,22 @@ class ClienteController extends Controller
                 'password' => 'required|min:6|max:256',
                 'estado' => 'required|string',
                 'red_social' => 'nullable|max:255',
-                'imagen' => 'nullable|max:2048',
+                'imagen1' => 'nullable|image|max:2048',
             ]);
 
-            // Encriptar contraseña
             $validated['password'] = Hash::make($request->password);
-            $validated['imagen'] = 'cliente_default.jpg';
+            $validated['imagen1'] = 'cliente_default.jpg';
 
-            // Insertar en MongoDB
-            $cliente = new Cliente($validated);
-            $cliente->save();
+            $cliente = Cliente::create($validated);
+
+            if ($request->hasFile('imagen1')) {
+                $img = $request->file('imagen1');
+                $filename = "cliente_{$cliente->_id}.{$img->extension()}";
+                $path = $img->storeAs('imagenes/clientes', $filename, 'public');
+
+                $cliente->imagen1 = asset("storage/$path");
+                $cliente->save();
+            }
 
             return response()->json([
                 'message' => 'Cliente registrado con éxito.',
@@ -87,23 +92,24 @@ class ClienteController extends Controller
         try {
             $cliente = Cliente::findOrFail($id);
 
-            // Validación
             $validated = $request->validate([
                 'nombre' => 'required|min:3|max:50',
                 'apellido_materno' => 'required|min:3|max:50',
                 'apellido_paterno' => 'required|min:3|max:50',
                 'estado' => 'required|string',
-                'imagen' => 'nullable|string|max:2048',
+                'imagen1' => 'nullable|image|max:2048',
             ]);
 
-            // Si se envía una imagen, actualizarla; si no, mantener la actual
-            if (!$request->has('imagen')) {
-                unset($validated['imagen']);
-            }
-
-
-            // Actualizar cliente
             $cliente->update($validated);
+
+            if ($request->hasFile('imagen1')) {
+                $img = $request->file('imagen1');
+                $filename = "cliente_{$cliente->_id}.{$img->extension()}";
+                $path = $img->storeAs('imagenes/clientes', $filename, 'public');
+
+                $cliente->imagen1 = asset("storage/$path");
+                $cliente->save();
+            }
 
             return response()->json([
                 'message' => 'Cliente actualizado con éxito.',
@@ -121,7 +127,7 @@ class ClienteController extends Controller
     public function destroy($id)
     {
         try {
-            $objectId = new ObjectId($id); // Convertir a ObjectId
+            $objectId = new ObjectId($id);
 
             $cliente = Cliente::where('_id', $objectId)->first();
 
@@ -131,7 +137,6 @@ class ClienteController extends Controller
                     'clientes' => null
                 ], 404);
             }
-
             $cliente->delete();
 
             return response()->json(

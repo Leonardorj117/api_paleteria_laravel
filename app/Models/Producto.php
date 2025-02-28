@@ -20,8 +20,12 @@ class Producto extends Model
         'precio', 
         'estado', 
         'existencia', 
-        'imagen_1', 
-        'imagen_2', 
-        'imagen_3'
+        'imagen1', 
+        'imagen2', 
+        'imagen3'
+    ];
+
+    protected $casts = [
+        '_id' => 'string',
     ];
 }

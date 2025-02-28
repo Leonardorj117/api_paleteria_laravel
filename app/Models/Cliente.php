@@ -26,6 +26,10 @@ class Cliente extends Authenticatable
         'password',
         'estado',
         'red_social',
-        'imagen',
+        'imagen1',
+    ];
+
+    protected $casts = [
+        '_id' => 'string',
     ];
 }

@@ -14,7 +14,7 @@ use App\Http\Controllers\AdminAuthController;
 Route::get('clientes', [ClienteController::class, 'index']);
 Route::post('clientes', [ClienteController::class, 'store']);
 Route::delete('clientes/{id}', [ClienteController::class, 'destroy']);
-Route::put('clientes/{id}', [ClienteController::class, 'update']);
+Route::post('clientes/{id}', [ClienteController::class, 'update']);
 
 
 //Amind Login
@@ -34,7 +34,7 @@ Route::get('pedidos/{id}/detalle', [PedidoController::class, 'detalle']);
 Route::prefix('administradores')->group(function () {
     Route::get('/', [AdminController::class, 'index']);
     Route::get('/{id}', [AdminController::class, 'show']); // Obtener un administrador por ID
-    Route::put('/{id}', [AdminController::class, 'update']); // Actualizar un administrador por ID
+    Route::post('/{id}', [AdminController::class, 'update']); // Actualizar un administrador por ID
     Route::delete('/{id}', [AdminController::class, 'destroy']); // Eliminar un administrador por ID
     Route::post('/', [AdminController::class, 'create']);//Crear un administrador.
 });
@@ -43,6 +43,6 @@ Route::prefix('administradores')->group(function () {
     Route::get('productos', [ProductoController::class, 'index']);
     Route::post('productos', [ProductoController::class, 'store']);
     Route::get('productos/{id}', [ProductoController::class, 'show']);
-    Route::put('productos/{id}', [ProductoController::class, 'update']);
+    Route::post('productos/{id}', [ProductoController::class, 'update']);
     Route::delete('productos/{id}', [ProductoController::class, 'destroy']);
 // });
